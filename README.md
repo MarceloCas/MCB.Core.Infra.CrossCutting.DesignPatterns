@@ -1,0 +1,1 @@
+# MCB.Core.Infra.CrossCutting.DesignPatterns
