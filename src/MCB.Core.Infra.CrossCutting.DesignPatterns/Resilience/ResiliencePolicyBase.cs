@@ -166,17 +166,14 @@ public abstract class ResiliencePolicyBase
         ResetCurrentRetryCount();
         return true;
     }
-    public async Task<bool> ExecuteAsync<TInput>(Func<TInput, CancellationToken, Task> handler, TInput input, CancellationToken cancellationToken)
+    public async Task<bool> ExecuteAsync<TInput>(Func<TInput?, CancellationToken, Task> handler, TInput? input, CancellationToken cancellationToken)
     {
-        if (input is null)
-            throw new ArgumentNullException(nameof(input));
-
         var policyResult = await _asyncCircuitBreakerPolicy.ExecuteAndCaptureAsync(
             async (context, cancellationToken) =>
             {
                 await _asyncRetryPolicy.ExecuteAsync(async () =>
                     await handler(
-                        (TInput)context[RETRY_POLICY_CONTEXT_INPUT_KEY],
+                        (TInput?)context[RETRY_POLICY_CONTEXT_INPUT_KEY],
                         cancellationToken
                     ).ConfigureAwait(false)
                 ).ConfigureAwait(false);
@@ -191,11 +188,8 @@ public abstract class ResiliencePolicyBase
         ResetCurrentRetryCount();
         return true;
     }
-    public async Task<(bool success, TOutput output)> ExecuteAsync<TInput, TOutput>(Func<TInput, CancellationToken, Task<TOutput>> handler, TInput input, CancellationToken cancellationToken)
+    public async Task<(bool success, TOutput? output)> ExecuteAsync<TInput, TOutput>(Func<TInput?, CancellationToken, Task<TOutput?>> handler, TInput? input, CancellationToken cancellationToken)
     {
-        if (input is null)
-            throw new ArgumentNullException(nameof(input));
-
         var policyResult = await _asyncCircuitBreakerPolicy.ExecuteAndCaptureAsync(
             async (context, cancellationToken) =>
             {
