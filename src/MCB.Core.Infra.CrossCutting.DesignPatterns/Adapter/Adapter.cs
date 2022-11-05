@@ -66,14 +66,14 @@ public class Adapter
         return _mapper.Map(source, existingTarget, sourceType, targetType);
     }
 
-    public object Adapt(object source, object targetType)
+    public object Adapt(object source, object target)
     {
         if (source is null)
             throw new ArgumentNullException(nameof(source));
-        if (targetType is null)
-            throw new ArgumentNullException(nameof(targetType));
+        if (target is null)
+            throw new ArgumentNullException(nameof(target));
 
-        return _mapper.Map(source, targetType, source.GetType(), targetType.GetType());
+        return _mapper.Map(source, target, source.GetType(), target.GetType());
     }
 
     public TTarget Adapt<TSource, TTarget>(TSource source)

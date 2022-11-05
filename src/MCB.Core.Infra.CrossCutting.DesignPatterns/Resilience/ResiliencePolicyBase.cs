@@ -168,6 +168,9 @@ public abstract class ResiliencePolicyBase
     }
     public async Task<bool> ExecuteAsync<TInput>(Func<TInput, CancellationToken, Task> handler, TInput input, CancellationToken cancellationToken)
     {
+        if (input is null)
+            throw new ArgumentNullException(nameof(input));
+
         var policyResult = await _asyncCircuitBreakerPolicy.ExecuteAndCaptureAsync(
             async (context, cancellationToken) =>
             {
@@ -190,12 +193,15 @@ public abstract class ResiliencePolicyBase
     }
     public async Task<(bool success, TOutput output)> ExecuteAsync<TInput, TOutput>(Func<TInput, CancellationToken, Task<TOutput>> handler, TInput input, CancellationToken cancellationToken)
     {
+        if (input is null)
+            throw new ArgumentNullException(nameof(input));
+
         var policyResult = await _asyncCircuitBreakerPolicy.ExecuteAndCaptureAsync(
             async (context, cancellationToken) =>
             {
                 context.Add(
-                    RETRY_POLICY_CONTEXT_OUTPUT_KEY,
-                    await _asyncRetryPolicy.ExecuteAsync(async () =>
+                    key: RETRY_POLICY_CONTEXT_OUTPUT_KEY,
+                    value: await _asyncRetryPolicy.ExecuteAsync(async () =>
                         await handler(
                             (TInput)context[RETRY_POLICY_CONTEXT_INPUT_KEY],
                             cancellationToken
