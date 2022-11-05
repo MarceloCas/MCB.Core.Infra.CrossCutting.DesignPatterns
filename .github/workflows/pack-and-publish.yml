@@ -1,0 +1,33 @@
+name: pack-and-publish
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Package version'     
+        required: true
+        default: '0.0.0'
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v2
+      with:
+        dotnet-version: 6.0.x
+    - name: Restore dependencies
+      run: dotnet restore
+    - name: Build
+      run: dotnet build --no-restore -c Release
+    - name: Test
+      run: dotnet test -c Release --no-build --verbosity normal
+    - name: Pack
+      run: dotnet pack -c Release src/MCB.Core.Infra.CrossCutting.DesignPatterns/MCB.Core.Infra.CrossCutting.DesignPatterns.csproj /p:Version='${{ github.event.inputs.version }}' --include-symbols --include-source
+    - name: Publish
+      run: dotnet nuget push **/*${{ github.event.inputs.version }}.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json
