@@ -178,7 +178,7 @@ public abstract class ResiliencePolicyBase
                     ).ConfigureAwait(false)
                 ).ConfigureAwait(false);
             },
-            contextData: new Dictionary<string, object> { { RETRY_POLICY_CONTEXT_INPUT_KEY, input } },
+            contextData: new Dictionary<string, object?> { { RETRY_POLICY_CONTEXT_INPUT_KEY, input } },
             cancellationToken
         ).ConfigureAwait(false);
 
@@ -203,7 +203,7 @@ public abstract class ResiliencePolicyBase
                     ).ConfigureAwait(false)
                 );
             },
-            contextData: new Dictionary<string, object> { { RETRY_POLICY_CONTEXT_INPUT_KEY, input } },
+            contextData: new Dictionary<string, object?> { { RETRY_POLICY_CONTEXT_INPUT_KEY, input } },
             cancellationToken
         ).ConfigureAwait(false);
 
