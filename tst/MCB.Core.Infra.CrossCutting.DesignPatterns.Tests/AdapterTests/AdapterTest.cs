@@ -3,6 +3,7 @@ using Mapster;
 using MCB.Core.Infra.CrossCutting.DependencyInjection;
 using MCB.Core.Infra.CrossCutting.DependencyInjection.Abstractions.Enums;
 using MCB.Core.Infra.CrossCutting.DesignPatterns.Abstractions.Adapter;
+using MCB.Core.Infra.CrossCutting.DesignPatterns.Adapter;
 using MCB.Core.Infra.CrossCutting.DesignPatterns.DependencyInjection;
 using MCB.Core.Infra.CrossCutting.DesignPatterns.Tests.AdapterTests.Models;
 using System;
@@ -17,8 +18,6 @@ public class AdapterTest
     {
         // Arrange
         var dependencyInjectionContainer = new DependencyInjectionContainer();
-        dependencyInjectionContainer.Build();
-
         Bootstrapper.ConfigureServices(
             dependencyInjectionContainer,
             adapterConfiguration =>
@@ -34,13 +33,11 @@ public class AdapterTest
                 });
             }
         );
-        var adapter = dependencyInjectionContainer.Resolve<IAdapter>();
+        dependencyInjectionContainer.Build();
 
-        if (adapter == null)
-        {
-            Assert.False(false);
-            return;
-        }
+        var adapter = dependencyInjectionContainer.Resolve<IAdapter>()!;
+
+        adapter.Should().NotBeNull();
 
         var id = Guid.NewGuid();
 
@@ -90,7 +87,6 @@ public class AdapterTest
     {
         // Arrange
         var dependencyInjectionContainer = new DependencyInjectionContainer();
-        dependencyInjectionContainer.Build();
 
         Bootstrapper.ConfigureServices(
             dependencyInjectionContainer,
@@ -107,13 +103,11 @@ public class AdapterTest
                 });
             }
         );
-        var adapter = dependencyInjectionContainer.Resolve<IAdapter>();
+        dependencyInjectionContainer.Build();
 
-        if (adapter == null)
-        {
-            Assert.False(false);
-            return;
-        }
+        var adapter = dependencyInjectionContainer.Resolve<IAdapter>()!;
+
+        adapter.Should().NotBeNull();
 
         // Act
         var addressCollection = new Address?[]
