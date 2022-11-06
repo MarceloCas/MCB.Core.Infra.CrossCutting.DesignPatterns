@@ -34,9 +34,9 @@ public class BootstrapperTest
         var adapter = dependencyInjectionContainer.Resolve<IAdapter>();
 
         mapperRegistration.Should().NotBeNull();
-        mapperRegistration.DependencyInjectionLifecycle.Should().Be(adapterConfigAux.DependencyInjectionLifecycle);
+        mapperRegistration!.DependencyInjectionLifecycle.Should().Be(adapterConfigAux!.DependencyInjectionLifecycle);
         adapterRegistration.Should().NotBeNull();
-        adapterRegistration.DependencyInjectionLifecycle.Should().Be(adapterConfigAux.DependencyInjectionLifecycle);
+        adapterRegistration!.DependencyInjectionLifecycle.Should().Be(adapterConfigAux!.DependencyInjectionLifecycle);
         mapper.Should().NotBeNull();
         adapter.Should().NotBeNull();
 
@@ -67,9 +67,9 @@ public class BootstrapperTest
         var adapter = dependencyInjectionContainer.Resolve<IAdapter>();
 
         mapperRegistration.Should().NotBeNull();
-        mapperRegistration.DependencyInjectionLifecycle.Should().Be(adapterConfigAux.DependencyInjectionLifecycle);
+        mapperRegistration!.DependencyInjectionLifecycle.Should().Be(adapterConfigAux!.DependencyInjectionLifecycle);
         adapterRegistration.Should().NotBeNull();
-        adapterRegistration.DependencyInjectionLifecycle.Should().Be(adapterConfigAux.DependencyInjectionLifecycle);
+        adapterRegistration!.DependencyInjectionLifecycle.Should().Be(adapterConfigAux!.DependencyInjectionLifecycle);
         mapper.Should().NotBeNull();
         adapter.Should().NotBeNull();
 
@@ -83,7 +83,7 @@ public class BootstrapperTest
         var dependencyInjectionContainer = new DependencyInjectionContainer();
 
         // Act
-        Bootstrapper.ConfigureServices(dependencyInjectionContainer, adapterConfigurationAction: null);
+        Bootstrapper.ConfigureServices(dependencyInjectionContainer, adapterConfigurationAction: null!);
         dependencyInjectionContainer.Build();
 
         // Assert

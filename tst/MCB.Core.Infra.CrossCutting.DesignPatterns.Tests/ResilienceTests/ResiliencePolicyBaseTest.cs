@@ -28,10 +28,10 @@ public class ResiliencePolicyBaseTest
 
     // Private Methods
     private ResiliencePolicyWithAllConfig CreateResiliencePolicyWithAllConfig() => new(
-        _fixture.ServiceProvider.GetService<ILogger<ResiliencePolicyWithAllConfig>>()
+        _fixture.ServiceProvider.GetService<ILogger<ResiliencePolicyWithAllConfig>>()!
     );
     private ResiliencePolicyWithMinimumConfig CreateResiliencePolicyWithMinimumConfig() => new(
-        _fixture.ServiceProvider.GetService<ILogger<ResiliencePolicyWithMinimumConfig>>()
+        _fixture.ServiceProvider.GetService<ILogger<ResiliencePolicyWithMinimumConfig>>()!
     );
 
     [Fact]
@@ -522,7 +522,7 @@ public class ResiliencePolicyBaseTest
             (input, cancellationToken) =>
             {
 
-                inputIsValid = input.Id == id && input.Name == name;
+                inputIsValid = input!.Id == id && input.Name == name;
 
                 return Task.CompletedTask;
             },
@@ -592,7 +592,7 @@ public class ResiliencePolicyBaseTest
         var (success, output) = await resiliencePolicyWithAllConfig.ExecuteAsync(
             (input, cancellationToken) =>
             {
-                return Task.FromResult($"{input.id}-{input.name}");
+                return Task.FromResult($"{input.id}-{input.name}")!;
             },
             input: (id, name),
             cancellationToken: default

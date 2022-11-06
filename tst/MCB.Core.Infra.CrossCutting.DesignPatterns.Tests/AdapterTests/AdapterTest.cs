@@ -55,27 +55,38 @@ public class AdapterTest
         };
 
         // Act
-        var address = adapter.Adapt<AddressDto, Address>(addressDto) ?? new Address();
-        var address2 = adapter.Adapt<AddressDto, Address>(addressDto, existingTarget: default) ?? new Address();
+        var addressCollection = new Address?[]
+        {
+            (Address?)adapter.Adapt(targetType: typeof(Address), source: addressDto),
+
+            (Address?)adapter.Adapt(targetType: typeof(Address), source: addressDto, sourceType: typeof(AddressDto)),
+
+            (Address?)adapter.Adapt(targetType: typeof(Address), source: addressDto, existingTarget: new Address()),
+            (Address?)adapter.Adapt(targetType: typeof(Address), sourceType: typeof(AddressDto), source: addressDto, existingTarget: new Address()),
+
+            (Address?)adapter.Adapt(source: addressDto, target: new Address()),
+
+            adapter.Adapt<AddressDto, Address>(source: addressDto),
+
+            adapter.Adapt<Address>(source: addressDto),
+            adapter.Adapt<Address>(source: addressDto, existingTarget: new Address()),
+        };
 
         // Assert
-        address.Id.Should().Be(id);
-        address.City.Should().Be(addressDto.City);
-        address.Neighborhood.Should().Be(addressDto.Neighborhood);
-        address.Number.Should().Be(addressDto.Number);
-        address.Street.Should().Be(addressDto.Street);
-        address.ZipCode.Should().Be(addressDto.ZipCode);
-
-        address2.Id.Should().Be(id);
-        address2.Neighborhood.Should().Be(addressDto.Neighborhood);
-        address2.Number.Should().Be(addressDto.Number);
-        address2.Street.Should().Be(addressDto.Street);
-        address2.ZipCode.Should().Be(addressDto.ZipCode);
-
+        foreach (var address in addressCollection)
+        {
+            address.Should().NotBeNull();
+            address!.Id.Should().Be(id);
+            address!.City.Should().Be(addressDto.City);
+            address!.Neighborhood.Should().Be(addressDto.Neighborhood);
+            address!.Number.Should().Be(addressDto.Number);
+            address!.Street.Should().Be(addressDto.Street);
+            address!.ZipCode.Should().Be(addressDto.ZipCode);
+        }
     }
 
     [Fact]
-    public void Adapter_Shoul_Be_Adapt_Correctly_With_Existing_Target()
+    public void Adapter_Should_Not_Adapt_Null_Value()
     {
         // Arrange
         var dependencyInjectionContainer = new DependencyInjectionContainer();
@@ -104,56 +115,26 @@ public class AdapterTest
             return;
         }
 
-        var aditionalAddressProperty = 1;
-        var addressDto = new AddressDto
+        // Act
+        var addressCollection = new Address?[]
         {
-            City = "São Paulo",
-            Neighborhood = "Se",
-            Number = "N/A",
-            Street = "Praça da Sé",
-            ZipCode = "01001-000"
+            (Address?)adapter.Adapt(targetType: typeof(Address), source: null),
+
+            (Address?)adapter.Adapt(targetType: typeof(Address), source: null, sourceType: typeof(AddressDto)),
+
+            (Address?)adapter.Adapt(targetType: typeof(Address), source: null, existingTarget: null),
+            (Address?)adapter.Adapt(targetType: typeof(Address), sourceType: typeof(AddressDto), source: null, existingTarget: null),
+
+            (Address?)adapter.Adapt(source: null, target: null),
+
+            adapter.Adapt<AddressDto, Address>(source: null),
+
+            adapter.Adapt<Address>(source: null),
+            adapter.Adapt<Address>(source: null, existingTarget: null),
         };
 
-        // Act
-        var address = new Address { AditionalAddressProperty = aditionalAddressProperty };
-        address = adapter.Adapt(addressDto, address) ?? new Address();
-
         // Assert
-        address.AditionalAddressProperty.Should().Be(aditionalAddressProperty);
-        address.City.Should().Be(addressDto.City);
-        address.Neighborhood.Should().Be(addressDto.Neighborhood);
-        address.Number.Should().Be(addressDto.Number);
-        address.Street.Should().Be(addressDto.Street);
-        address.ZipCode.Should().Be(addressDto.ZipCode);
-    }
-
-    [Fact]
-    public void Adapter_Should_Not_Adapt_Null_Value()
-    {
-        // Arrange
-        var dependencyInjectionContainer = new DependencyInjectionContainer();
-
-        Bootstrapper.ConfigureServices(
-            dependencyInjectionContainer,
-            adapterConfiguration =>
-            {
-                adapterConfiguration.DependencyInjectionLifecycle = DependencyInjectionLifecycle.Singleton;
-                adapterConfiguration.TypeAdapterConfigurationFunction = new Func<TypeAdapterConfig>(() =>
-                {
-                    var typeAdapterConfig = new TypeAdapterConfig();
-                    typeAdapterConfig.ForType<AddressDto, Address>();
-
-                    return typeAdapterConfig;
-                });
-            }
-        );
-        dependencyInjectionContainer.Build();
-        var adapter = dependencyInjectionContainer.Resolve<IAdapter>();
-
-        // Act
-        var address = adapter.Adapt<AddressDto, Address>(null);
-
-        // Assert
-        address.Should().BeNull();
+        foreach (var address in addressCollection)
+            address.Should().BeNull();
     }
 }
