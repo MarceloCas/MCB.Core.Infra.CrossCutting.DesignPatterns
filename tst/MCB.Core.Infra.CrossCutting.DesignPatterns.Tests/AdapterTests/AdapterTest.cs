@@ -64,6 +64,8 @@ public class AdapterTest
             (Address?)adapter.Adapt(source: addressDto, target: new Address()),
 
             adapter.Adapt<AddressDto, Address>(source: addressDto),
+            adapter.Adapt<AddressDto, Address>(source: addressDto, existingTarget: null),
+            adapter.Adapt<AddressDto, Address>(source: addressDto, existingTarget: new Address()),
 
             adapter.Adapt<Address>(source: addressDto),
             adapter.Adapt<Address>(source: addressDto, existingTarget: new Address()),
@@ -131,7 +133,8 @@ public class AdapterTest
             (Address?)adapter.Adapt(source: null, target: new Address()),
             (Address?)adapter.Adapt(source: null, target: null),
 
-            adapter.Adapt<AddressDto, Address>(source: null),
+            adapter.Adapt<AddressDto, Address>(source: null, existingTarget: new Address()),
+            adapter.Adapt<AddressDto, Address>(source: null, existingTarget: null),
 
             adapter.Adapt<Address>(source: null),
             adapter.Adapt<Address>(source: null, existingTarget: new Address()),
