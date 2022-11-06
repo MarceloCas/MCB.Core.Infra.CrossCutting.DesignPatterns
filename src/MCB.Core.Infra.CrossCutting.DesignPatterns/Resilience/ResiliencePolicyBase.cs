@@ -20,9 +20,6 @@ public abstract class ResiliencePolicyBase
     private AsyncRetryPolicy _asyncRetryPolicy;
     private AsyncCircuitBreakerPolicy _asyncCircuitBreakerPolicy;
 
-    // Protected Properties
-    protected ILogger Logger { get; }
-
     // Public Properties
     public string Name { get; private set; }
 
@@ -30,19 +27,16 @@ public abstract class ResiliencePolicyBase
 
     public int CurrentRetryCount { get; private set; }
     public int CurrentCircuitBreakerOpenCount { get; private set; }
-    public ResiliencePolicyConfig ResiliencePolicyConfig { get; private set; }
-
-    public ResiliencePolicyConfig ResilienceConfig => throw new NotImplementedException();
+    public ResiliencePolicyConfig ResilienceConfig { get; private set; }
 
     // Constructors
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
     protected ResiliencePolicyBase(ILogger logger)
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
     {
-        Logger = logger;
-        ResiliencePolicyConfig = new ResiliencePolicyConfig();
+        ResilienceConfig = new ResiliencePolicyConfig();
 
-        ApplyConfig(ResiliencePolicyConfig);
+        ApplyConfig(ResilienceConfig);
         ResetCurrentCircuitBreakerOpenCount();
     }
 
@@ -136,8 +130,8 @@ public abstract class ResiliencePolicyBase
     public void Configure(Func<ResiliencePolicyConfig> configureAction)
     {
         var resiliencePolicyConfig = configureAction();
-        ResiliencePolicyConfig = resiliencePolicyConfig;
-        ApplyConfig(ResiliencePolicyConfig);
+        ResilienceConfig = resiliencePolicyConfig;
+        ApplyConfig(ResilienceConfig);
     }
     public void CloseCircuitBreakerManually()
     {

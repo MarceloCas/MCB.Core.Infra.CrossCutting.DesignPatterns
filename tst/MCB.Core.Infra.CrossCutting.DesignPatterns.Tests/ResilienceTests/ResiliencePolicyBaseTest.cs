@@ -140,16 +140,16 @@ public class ResiliencePolicyBaseTest
         successOnRunResiliencePolicyWithAllConfig.Should().BeFalse();
         resiliencePolicyWithAllConfig.CircuitState.Should().Be(CircuitState.Open);
         resiliencePolicyWithAllConfig.CurrentCircuitBreakerOpenCount.Should().Be(1);
-        resiliencePolicyWithAllConfig.CurrentRetryCount.Should().Be(resiliencePolicyWithAllConfig.ResiliencePolicyConfig.RetryMaxAttemptCount);
+        resiliencePolicyWithAllConfig.CurrentRetryCount.Should().Be(resiliencePolicyWithAllConfig.ResilienceConfig.RetryMaxAttemptCount);
         resiliencePolicyWithAllConfig.OnCircuitBreakerHalfOpenAditionalHandlerCount.Should().Be(0);
         resiliencePolicyWithAllConfig.OnCircuitBreakerOpenAditionalHandlerCount.Should().Be(1);
         resiliencePolicyWithAllConfig.OnCircuitBreakerCloseAditionalHandlerCount.Should().Be(0);
-        resiliencePolicyWithAllConfig.OnRetryAditionalHandlerCount.Should().Be(resiliencePolicyWithAllConfig.ResiliencePolicyConfig.RetryMaxAttemptCount);
+        resiliencePolicyWithAllConfig.OnRetryAditionalHandlerCount.Should().Be(resiliencePolicyWithAllConfig.ResilienceConfig.RetryMaxAttemptCount);
 
         resiliencePolicyWithMinimumConfig.CircuitState.Should().Be(CircuitState.Open);
         successOnRunResiliencePolicyWithMinimumConfig.Should().BeFalse();
         resiliencePolicyWithMinimumConfig.CurrentCircuitBreakerOpenCount.Should().Be(1);
-        resiliencePolicyWithMinimumConfig.CurrentRetryCount.Should().Be(resiliencePolicyWithMinimumConfig.ResiliencePolicyConfig.RetryMaxAttemptCount);
+        resiliencePolicyWithMinimumConfig.CurrentRetryCount.Should().Be(resiliencePolicyWithMinimumConfig.ResilienceConfig.RetryMaxAttemptCount);
     }
 
     [Fact]
@@ -189,13 +189,13 @@ public class ResiliencePolicyBaseTest
         // Act
         var stopwatch = Stopwatch.StartNew();
         successOnRunResiliencePolicyWithAllConfig = await resiliencePolicyWithAllConfig.ExecuteAsync(
-            (cancellationToken) =>
+            (Func<System.Threading.CancellationToken, Task>)((cancellationToken) =>
             {
-                if (resiliencePolicyWithAllConfig.CurrentRetryCount < resiliencePolicyWithAllConfig.ResiliencePolicyConfig.RetryMaxAttemptCount)
+                if (resiliencePolicyWithAllConfig.CurrentRetryCount < resiliencePolicyWithAllConfig.ResilienceConfig.RetryMaxAttemptCount)
                     throw new InvalidOperationException();
 
                 return Task.CompletedTask;
-            },
+            }),
             cancellationToken: default
         );
         stopwatch.Stop();
@@ -208,7 +208,7 @@ public class ResiliencePolicyBaseTest
         resiliencePolicyWithAllConfig.OnCircuitBreakerHalfOpenAditionalHandlerCount.Should().Be(0);
         resiliencePolicyWithAllConfig.OnCircuitBreakerOpenAditionalHandlerCount.Should().Be(0);
         resiliencePolicyWithAllConfig.OnCircuitBreakerCloseAditionalHandlerCount.Should().Be(0);
-        resiliencePolicyWithAllConfig.OnRetryAditionalHandlerCount.Should().Be(resiliencePolicyWithAllConfig.ResiliencePolicyConfig.RetryMaxAttemptCount);
+        resiliencePolicyWithAllConfig.OnRetryAditionalHandlerCount.Should().Be(resiliencePolicyWithAllConfig.ResilienceConfig.RetryMaxAttemptCount);
     }
 
     [Fact]
@@ -228,7 +228,7 @@ public class ResiliencePolicyBaseTest
             },
             cancellationToken: default
         );
-        await Task.Delay(resiliencePolicyWithAllConfig.ResiliencePolicyConfig.CircuitBreakerWaitingTimeFunction().Add(TimeSpan.FromSeconds(1)));
+        await Task.Delay(resiliencePolicyWithAllConfig.ResilienceConfig.CircuitBreakerWaitingTimeFunction().Add(TimeSpan.FromSeconds(1)));
 
         successOnRunResiliencePolicyWithMinimumlConfig = await resiliencePolicyWithMinimumConfig.ExecuteAsync(
             (cancellationToken) =>
@@ -237,7 +237,7 @@ public class ResiliencePolicyBaseTest
             },
             cancellationToken: default
         );
-        await Task.Delay(resiliencePolicyWithMinimumConfig.ResiliencePolicyConfig.CircuitBreakerWaitingTimeFunction().Add(TimeSpan.FromSeconds(1)));
+        await Task.Delay(resiliencePolicyWithMinimumConfig.ResilienceConfig.CircuitBreakerWaitingTimeFunction().Add(TimeSpan.FromSeconds(1)));
 
         // Assert
         successOnRunResiliencePolicyWithAllConfig.Should().BeFalse();
@@ -247,7 +247,7 @@ public class ResiliencePolicyBaseTest
         resiliencePolicyWithAllConfig.OnCircuitBreakerHalfOpenAditionalHandlerCount.Should().Be(1);
         resiliencePolicyWithAllConfig.OnCircuitBreakerOpenAditionalHandlerCount.Should().Be(1);
         resiliencePolicyWithAllConfig.OnCircuitBreakerCloseAditionalHandlerCount.Should().Be(0);
-        resiliencePolicyWithAllConfig.OnRetryAditionalHandlerCount.Should().Be(resiliencePolicyWithAllConfig.ResiliencePolicyConfig.RetryMaxAttemptCount);
+        resiliencePolicyWithAllConfig.OnRetryAditionalHandlerCount.Should().Be(resiliencePolicyWithAllConfig.ResilienceConfig.RetryMaxAttemptCount);
 
         successOnRunResiliencePolicyWithMinimumlConfig.Should().BeFalse();
         resiliencePolicyWithMinimumConfig.CircuitState.Should().Be(CircuitState.HalfOpen);
@@ -272,7 +272,7 @@ public class ResiliencePolicyBaseTest
             },
             cancellationToken: default
         );
-        await Task.Delay(resiliencePolicyWithAllConfig.ResiliencePolicyConfig.CircuitBreakerWaitingTimeFunction().Add(TimeSpan.FromSeconds(1)));
+        await Task.Delay(resiliencePolicyWithAllConfig.ResilienceConfig.CircuitBreakerWaitingTimeFunction().Add(TimeSpan.FromSeconds(1)));
         successOnRunResiliencePolicyWithAllConfig = await resiliencePolicyWithAllConfig.ExecuteAsync(
             (cancellationToken) =>
             {
@@ -288,7 +288,7 @@ public class ResiliencePolicyBaseTest
             },
             cancellationToken: default
         );
-        await Task.Delay(resiliencePolicyWithMinimumConfig.ResiliencePolicyConfig.CircuitBreakerWaitingTimeFunction().Add(TimeSpan.FromSeconds(1)));
+        await Task.Delay(resiliencePolicyWithMinimumConfig.ResilienceConfig.CircuitBreakerWaitingTimeFunction().Add(TimeSpan.FromSeconds(1)));
         successOnRunResiliencePolicyWithMinimumConfig = await resiliencePolicyWithMinimumConfig.ExecuteAsync(
             (cancellationToken) =>
             {
@@ -305,7 +305,7 @@ public class ResiliencePolicyBaseTest
         resiliencePolicyWithAllConfig.OnCircuitBreakerHalfOpenAditionalHandlerCount.Should().Be(1);
         resiliencePolicyWithAllConfig.OnCircuitBreakerOpenAditionalHandlerCount.Should().Be(1);
         resiliencePolicyWithAllConfig.OnCircuitBreakerCloseAditionalHandlerCount.Should().Be(1);
-        resiliencePolicyWithAllConfig.OnRetryAditionalHandlerCount.Should().Be(resiliencePolicyWithAllConfig.ResiliencePolicyConfig.RetryMaxAttemptCount);
+        resiliencePolicyWithAllConfig.OnRetryAditionalHandlerCount.Should().Be(resiliencePolicyWithAllConfig.ResilienceConfig.RetryMaxAttemptCount);
 
         successOnRunResiliencePolicyWithMinimumConfig.Should().BeTrue();
         resiliencePolicyWithMinimumConfig.CircuitState.Should().Be(CircuitState.Closed);
@@ -329,15 +329,15 @@ public class ResiliencePolicyBaseTest
             },
             cancellationToken: default
         );
-        await Task.Delay(resiliencePolicyWithAllConfig.ResiliencePolicyConfig.CircuitBreakerWaitingTimeFunction().Add(TimeSpan.FromSeconds(1)));
+        await Task.Delay(resiliencePolicyWithAllConfig.ResilienceConfig.CircuitBreakerWaitingTimeFunction().Add(TimeSpan.FromSeconds(1)));
         successOnRunResiliencePolicyWithAllConfig = await resiliencePolicyWithAllConfig.ExecuteAsync(
-            (cancellationToken) =>
+            (Func<System.Threading.CancellationToken, Task>)((cancellationToken) =>
             {
-                if (resiliencePolicyWithAllConfig.CurrentRetryCount < resiliencePolicyWithAllConfig.ResiliencePolicyConfig.RetryMaxAttemptCount)
+                if (resiliencePolicyWithAllConfig.CurrentRetryCount < resiliencePolicyWithAllConfig.ResilienceConfig.RetryMaxAttemptCount)
                     throw new InvalidOperationException();
 
                 return Task.CompletedTask;
-            },
+            }),
             cancellationToken: default
         );
 
@@ -348,15 +348,15 @@ public class ResiliencePolicyBaseTest
             },
             cancellationToken: default
         );
-        await Task.Delay(resiliencePolicyWithMinimumConfig.ResiliencePolicyConfig.CircuitBreakerWaitingTimeFunction().Add(TimeSpan.FromSeconds(1)));
+        await Task.Delay(resiliencePolicyWithMinimumConfig.ResilienceConfig.CircuitBreakerWaitingTimeFunction().Add(TimeSpan.FromSeconds(1)));
         successOnRunResiliencePolicyWithMinimumConfig = await resiliencePolicyWithMinimumConfig.ExecuteAsync(
-            (cancellationToken) =>
+            (Func<System.Threading.CancellationToken, Task>)((cancellationToken) =>
             {
-                if (resiliencePolicyWithMinimumConfig.CurrentRetryCount < resiliencePolicyWithMinimumConfig.ResiliencePolicyConfig.RetryMaxAttemptCount)
+                if (resiliencePolicyWithMinimumConfig.CurrentRetryCount < resiliencePolicyWithMinimumConfig.ResilienceConfig.RetryMaxAttemptCount)
                     throw new InvalidOperationException();
 
                 return Task.CompletedTask;
-            },
+            }),
             cancellationToken: default
         );
 
@@ -368,7 +368,7 @@ public class ResiliencePolicyBaseTest
         resiliencePolicyWithAllConfig.OnCircuitBreakerHalfOpenAditionalHandlerCount.Should().Be(1);
         resiliencePolicyWithAllConfig.OnCircuitBreakerOpenAditionalHandlerCount.Should().Be(1);
         resiliencePolicyWithAllConfig.OnCircuitBreakerCloseAditionalHandlerCount.Should().Be(1);
-        resiliencePolicyWithAllConfig.OnRetryAditionalHandlerCount.Should().Be(resiliencePolicyWithAllConfig.ResiliencePolicyConfig.RetryMaxAttemptCount * 2);
+        resiliencePolicyWithAllConfig.OnRetryAditionalHandlerCount.Should().Be(resiliencePolicyWithAllConfig.ResilienceConfig.RetryMaxAttemptCount * 2);
 
         successOnRunResiliencePolicyWithMinimumConfig.Should().BeTrue();
         resiliencePolicyWithMinimumConfig.CircuitState.Should().Be(CircuitState.Closed);
@@ -403,8 +403,8 @@ public class ResiliencePolicyBaseTest
         resiliencePolicyWithAllConfig.OpenCircuitBreakerManually();
         resiliencePolicyWithMinimumConfig.OpenCircuitBreakerManually();
 
-        await Task.Delay(resiliencePolicyWithAllConfig.ResiliencePolicyConfig.CircuitBreakerWaitingTimeFunction().Add(TimeSpan.FromSeconds(1)));
-        await Task.Delay(resiliencePolicyWithMinimumConfig.ResiliencePolicyConfig.CircuitBreakerWaitingTimeFunction().Add(TimeSpan.FromSeconds(1)));
+        await Task.Delay(resiliencePolicyWithAllConfig.ResilienceConfig.CircuitBreakerWaitingTimeFunction().Add(TimeSpan.FromSeconds(1)));
+        await Task.Delay(resiliencePolicyWithMinimumConfig.ResilienceConfig.CircuitBreakerWaitingTimeFunction().Add(TimeSpan.FromSeconds(1)));
 
         successOnRunResiliencePolicyAfterManuallyOpenedWithAllConfig = await resiliencePolicyWithMinimumConfig.ExecuteAsync(
             (cancellationToken) =>
@@ -450,8 +450,8 @@ public class ResiliencePolicyBaseTest
         resiliencePolicyWithAllConfig.OpenCircuitBreakerManually();
         resiliencePolicyWithMinimumConfig.OpenCircuitBreakerManually();
 
-        await Task.Delay(resiliencePolicyWithAllConfig.ResiliencePolicyConfig.CircuitBreakerWaitingTimeFunction().Add(TimeSpan.FromSeconds(1)));
-        await Task.Delay(resiliencePolicyWithMinimumConfig.ResiliencePolicyConfig.CircuitBreakerWaitingTimeFunction().Add(TimeSpan.FromSeconds(1)));
+        await Task.Delay(resiliencePolicyWithAllConfig.ResilienceConfig.CircuitBreakerWaitingTimeFunction().Add(TimeSpan.FromSeconds(1)));
+        await Task.Delay(resiliencePolicyWithMinimumConfig.ResilienceConfig.CircuitBreakerWaitingTimeFunction().Add(TimeSpan.FromSeconds(1)));
 
         var successOnRunResiliencePolicyAfterOpenAndWaitCircuitBreakerWaitingTimeWithAllConfig = await resiliencePolicyWithMinimumConfig.ExecuteAsync(
             (cancellationToken) =>
@@ -571,11 +571,11 @@ public class ResiliencePolicyBaseTest
 
         resiliencePolicyWithAllConfig.CircuitState.Should().Be(CircuitState.Open);
         resiliencePolicyWithAllConfig.CurrentCircuitBreakerOpenCount.Should().Be(1);
-        resiliencePolicyWithAllConfig.CurrentRetryCount.Should().Be(resiliencePolicyWithAllConfig.ResiliencePolicyConfig.RetryMaxAttemptCount);
+        resiliencePolicyWithAllConfig.CurrentRetryCount.Should().Be(resiliencePolicyWithAllConfig.ResilienceConfig.RetryMaxAttemptCount);
         resiliencePolicyWithAllConfig.OnCircuitBreakerHalfOpenAditionalHandlerCount.Should().Be(0);
         resiliencePolicyWithAllConfig.OnCircuitBreakerOpenAditionalHandlerCount.Should().Be(1);
         resiliencePolicyWithAllConfig.OnCircuitBreakerCloseAditionalHandlerCount.Should().Be(0);
-        resiliencePolicyWithAllConfig.OnRetryAditionalHandlerCount.Should().Be(resiliencePolicyWithAllConfig.ResiliencePolicyConfig.RetryMaxAttemptCount);
+        resiliencePolicyWithAllConfig.OnRetryAditionalHandlerCount.Should().Be(resiliencePolicyWithAllConfig.ResilienceConfig.RetryMaxAttemptCount);
     }
 
     [Fact]
@@ -636,11 +636,11 @@ public class ResiliencePolicyBaseTest
 
         resiliencePolicyWithAllConfig.CircuitState.Should().Be(CircuitState.Open);
         resiliencePolicyWithAllConfig.CurrentCircuitBreakerOpenCount.Should().Be(1);
-        resiliencePolicyWithAllConfig.CurrentRetryCount.Should().Be(resiliencePolicyWithAllConfig.ResiliencePolicyConfig.RetryMaxAttemptCount);
+        resiliencePolicyWithAllConfig.CurrentRetryCount.Should().Be(resiliencePolicyWithAllConfig.ResilienceConfig.RetryMaxAttemptCount);
         resiliencePolicyWithAllConfig.OnCircuitBreakerHalfOpenAditionalHandlerCount.Should().Be(0);
         resiliencePolicyWithAllConfig.OnCircuitBreakerOpenAditionalHandlerCount.Should().Be(1);
         resiliencePolicyWithAllConfig.OnCircuitBreakerCloseAditionalHandlerCount.Should().Be(0);
-        resiliencePolicyWithAllConfig.OnRetryAditionalHandlerCount.Should().Be(resiliencePolicyWithAllConfig.ResiliencePolicyConfig.RetryMaxAttemptCount);
+        resiliencePolicyWithAllConfig.OnRetryAditionalHandlerCount.Should().Be(resiliencePolicyWithAllConfig.ResilienceConfig.RetryMaxAttemptCount);
     }
 }
 
