@@ -82,4 +82,52 @@ public class NotificationPublisherTest
         notificationSubscriber.NotificationCollection.First(q => q.NotificationType == NotificationType.Warning).Should().Be(notificationB);
         notificationSubscriber.NotificationCollection.First(q => q.NotificationType == NotificationType.Error).Should().Be(notificationC);
     }
+
+    [Fact]
+    public async Task NotificationPublisher_Should_Not_Publish_Unregistered_Subject()
+    {
+        // Arrange
+        var hasRaisedError = false;
+        var serviceCollection = new ServiceCollection();
+
+        var dependencyInjectionContainer = new DependencyInjectionContainer(serviceCollection);
+        Bootstrapper.ConfigureServices(
+            dependencyInjectionContainer,
+            adapterConfiguration =>
+            {
+                adapterConfiguration.DependencyInjectionLifecycle = DependencyInjectionLifecycle.Singleton;
+                adapterConfiguration.TypeAdapterConfigurationFunction = new Func<TypeAdapterConfig>(() =>
+                {
+                    var typeAdapterConfig = new TypeAdapterConfig();
+
+                    return typeAdapterConfig;
+                });
+            }
+        );
+        dependencyInjectionContainer.Unregister<INotificationSubscriber>();
+
+        serviceCollection.AddSingleton<IDependencyInjectionContainer>(serviceProvider => dependencyInjectionContainer);
+        dependencyInjectionContainer.Build();
+
+        var notificationPublisher = dependencyInjectionContainer.Resolve<INotificationPublisher>()!;
+        var notificationSubscriber = dependencyInjectionContainer.Resolve<INotificationSubscriber>()!;
+
+        notificationPublisher.Should().NotBeNull();
+
+        // Act
+        try
+        {
+            await notificationPublisher.PublishNotificationAsync(
+                new Notification(NotificationType.Information, code: Guid.NewGuid().ToString(), description: Guid.NewGuid().ToString()),
+                cancellationToken: default
+            );
+        }
+        catch (InvalidOperationException)
+        {
+            hasRaisedError = true;
+        }
+
+        // Assert
+        hasRaisedError.Should().BeTrue();
+    }
 }
