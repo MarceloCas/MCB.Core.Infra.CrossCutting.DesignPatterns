@@ -119,17 +119,28 @@ public class AdapterTest
         var addressCollection = new Address?[]
         {
             (Address?)adapter.Adapt(targetType: typeof(Address), source: null),
+            (Address?)adapter.Adapt(targetType: null!, source: null),
 
-            (Address?)adapter.Adapt(targetType: typeof(Address), source: null, sourceType: typeof(AddressDto)),
+            (Address?)adapter.Adapt(targetType: typeof(Address), source: new AddressDto(), sourceType: null!),
+            (Address?)adapter.Adapt(targetType: typeof(Address), source: null, sourceType: null!),
+            (Address?)adapter.Adapt(targetType: null!, source: null, sourceType: null!),
 
+            (Address?)adapter.Adapt(targetType: typeof(Address), source: new AddressDto(), existingTarget: null),
             (Address?)adapter.Adapt(targetType: typeof(Address), source: null, existingTarget: null),
-            (Address?)adapter.Adapt(targetType: typeof(Address), sourceType: typeof(AddressDto), source: null, existingTarget: null),
+            (Address?)adapter.Adapt(targetType: null!, source: null, existingTarget: null),
 
+            (Address?)adapter.Adapt(targetType: typeof(Address), sourceType: typeof(AddressDto), source: new AddressDto(), existingTarget: null),
+            (Address?)adapter.Adapt(targetType: typeof(Address), sourceType: typeof(AddressDto), source: null, existingTarget: null),
+            (Address?)adapter.Adapt(targetType: typeof(Address), sourceType: null!, source: null, existingTarget: null),
+            (Address?)adapter.Adapt(targetType: null!, sourceType: null!, source: null, existingTarget: null),
+
+            (Address?)adapter.Adapt(source: null, target: new Address()),
             (Address?)adapter.Adapt(source: null, target: null),
 
             adapter.Adapt<AddressDto, Address>(source: null),
 
             adapter.Adapt<Address>(source: null),
+            adapter.Adapt<Address>(source: null, existingTarget: new Address()),
             adapter.Adapt<Address>(source: null, existingTarget: null),
         };
 
