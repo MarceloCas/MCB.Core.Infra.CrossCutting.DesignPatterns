@@ -1,7 +1,7 @@
 ﻿using Mapster;
 using MCB.Core.Infra.CrossCutting.DependencyInjection.Abstractions.Enums;
 
-namespace MCB.Core.Infra.CrossCutting.DesignPatterns.IoC.Models;
+namespace MCB.Core.Infra.CrossCutting.DesignPatterns.DependencyInjection.Models;
 
 public class AdapterConfig
 {

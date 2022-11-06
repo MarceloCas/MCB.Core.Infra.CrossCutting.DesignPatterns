@@ -11,7 +11,7 @@ public class NotificationPublisher
     private readonly INotificationPublisherInternal _notificationPublisherInternal;
 
     // Constructors
-    internal NotificationPublisher(INotificationPublisherInternal notificationPublisherInternal)
+    public NotificationPublisher(INotificationPublisherInternal notificationPublisherInternal)
     {
         _notificationPublisherInternal = notificationPublisherInternal;
     }

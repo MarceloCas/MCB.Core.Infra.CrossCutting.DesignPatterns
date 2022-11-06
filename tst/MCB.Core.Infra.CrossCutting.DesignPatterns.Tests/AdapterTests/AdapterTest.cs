@@ -3,6 +3,7 @@ using Mapster;
 using MCB.Core.Infra.CrossCutting.DependencyInjection;
 using MCB.Core.Infra.CrossCutting.DependencyInjection.Abstractions.Enums;
 using MCB.Core.Infra.CrossCutting.DesignPatterns.Abstractions.Adapter;
+using MCB.Core.Infra.CrossCutting.DesignPatterns.DependencyInjection;
 using MCB.Core.Infra.CrossCutting.DesignPatterns.Tests.AdapterTests.Models;
 using System;
 using Xunit;
@@ -18,7 +19,7 @@ public class AdapterTest
         var dependencyInjectionContainer = new DependencyInjectionContainer();
         dependencyInjectionContainer.Build();
 
-        IoC.Bootstrapper.ConfigureServices(
+        Bootstrapper.ConfigureServices(
             dependencyInjectionContainer,
             adapterConfiguration =>
             {
@@ -80,7 +81,7 @@ public class AdapterTest
         var dependencyInjectionContainer = new DependencyInjectionContainer();
         dependencyInjectionContainer.Build();
 
-        IoC.Bootstrapper.ConfigureServices(
+        Bootstrapper.ConfigureServices(
             dependencyInjectionContainer,
             adapterConfiguration =>
             {
@@ -131,9 +132,8 @@ public class AdapterTest
     {
         // Arrange
         var dependencyInjectionContainer = new DependencyInjectionContainer();
-        bool hasRaisedException = false;
 
-        IoC.Bootstrapper.ConfigureServices(
+        Bootstrapper.ConfigureServices(
             dependencyInjectionContainer,
             adapterConfiguration =>
             {
@@ -151,18 +151,9 @@ public class AdapterTest
         var adapter = dependencyInjectionContainer.Resolve<IAdapter>();
 
         // Act
-        var address = default(Address);
-
-        try
-        {
-            address = adapter.Adapt<AddressDto, Address>(null);
-        }
-        catch (ArgumentNullException ex)
-        {
-            hasRaisedException = ex.ParamName == "source";
-        }
+        var address = adapter.Adapt<AddressDto, Address>(null);
 
         // Assert
-        hasRaisedException.Should().BeTrue();
+        address.Should().BeNull();
     }
 }

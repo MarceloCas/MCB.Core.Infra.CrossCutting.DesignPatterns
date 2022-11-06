@@ -14,7 +14,7 @@ public class NotificationSubscriber
     public IEnumerable<Notification> NotificationCollection => _notificationCollection.AsEnumerable();
 
     // Constructors
-    internal NotificationSubscriber()
+    public NotificationSubscriber()
     {
         _notificationCollection = new ConcurrentQueue<Notification>();
     }

@@ -4,13 +4,14 @@ using MapsterMapper;
 using MCB.Core.Infra.CrossCutting.DependencyInjection;
 using MCB.Core.Infra.CrossCutting.DependencyInjection.Abstractions.Enums;
 using MCB.Core.Infra.CrossCutting.DesignPatterns.Abstractions.Adapter;
-using MCB.Core.Infra.CrossCutting.DesignPatterns.IoC.Models;
+using MCB.Core.Infra.CrossCutting.DesignPatterns.DependencyInjection;
+using MCB.Core.Infra.CrossCutting.DesignPatterns.DependencyInjection.Models;
 using System;
 using System.Linq;
 using Xunit;
 
 
-namespace MCB.Core.Infra.CrossCutting.DesignPatterns.Tests.IoCTests;
+namespace MCB.Core.Infra.CrossCutting.DesignPatterns.Tests.DependencyInjectionTests;
 
 public class BootstrapperTest
 {
@@ -22,7 +23,7 @@ public class BootstrapperTest
         var adapterConfigAux = default(AdapterConfig);
 
         // Act
-        IoC.Bootstrapper.ConfigureServices(dependencyInjectionContainer, adapterConfig => { adapterConfigAux = adapterConfig; });
+        Bootstrapper.ConfigureServices(dependencyInjectionContainer, adapterConfig => { adapterConfigAux = adapterConfig; });
         dependencyInjectionContainer.Build();
 
         // Assert
@@ -50,7 +51,8 @@ public class BootstrapperTest
         var adapterConfigAux = default(AdapterConfig);
 
         // Act
-        IoC.Bootstrapper.ConfigureServices(dependencyInjectionContainer, adapterConfig => { 
+        Bootstrapper.ConfigureServices(dependencyInjectionContainer, adapterConfig =>
+        {
             adapterConfig.DependencyInjectionLifecycle = DependencyInjectionLifecycle.Scoped;
             adapterConfig.TypeAdapterConfigurationFunction = new Func<TypeAdapterConfig>(() => { return new TypeAdapterConfig(); });
             adapterConfigAux = adapterConfig;
@@ -81,7 +83,7 @@ public class BootstrapperTest
         var dependencyInjectionContainer = new DependencyInjectionContainer();
 
         // Act
-        IoC.Bootstrapper.ConfigureServices(dependencyInjectionContainer, adapterConfigurationAction: null);
+        Bootstrapper.ConfigureServices(dependencyInjectionContainer, adapterConfigurationAction: null);
         dependencyInjectionContainer.Build();
 
         // Assert

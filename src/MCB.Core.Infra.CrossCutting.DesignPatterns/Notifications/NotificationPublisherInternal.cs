@@ -21,6 +21,7 @@ public class NotificationPublisherInternal
         _dependencyInjectionContainer = dependencyInjectionContainer;
     }
 
+    // Protected Methods
     protected override ISubscriber<TSubject> InstanciateSubscriber<TSubject>(Type subscriberType)
     {
         var instance = _dependencyInjectionContainer.Resolve(subscriberType);
