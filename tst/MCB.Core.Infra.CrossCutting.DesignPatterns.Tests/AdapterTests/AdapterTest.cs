@@ -3,7 +3,6 @@ using Mapster;
 using MCB.Core.Infra.CrossCutting.DependencyInjection;
 using MCB.Core.Infra.CrossCutting.DependencyInjection.Abstractions.Enums;
 using MCB.Core.Infra.CrossCutting.DesignPatterns.Abstractions.Adapter;
-using MCB.Core.Infra.CrossCutting.DesignPatterns.Adapter;
 using MCB.Core.Infra.CrossCutting.DesignPatterns.DependencyInjection;
 using MCB.Core.Infra.CrossCutting.DesignPatterns.Tests.AdapterTests.Models;
 using System;

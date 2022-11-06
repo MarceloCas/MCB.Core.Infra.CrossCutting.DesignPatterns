@@ -3,18 +3,13 @@ using Mapster;
 using MCB.Core.Infra.CrossCutting.DependencyInjection;
 using MCB.Core.Infra.CrossCutting.DependencyInjection.Abstractions.Enums;
 using MCB.Core.Infra.CrossCutting.DependencyInjection.Abstractions.Interfaces;
-using MCB.Core.Infra.CrossCutting.DesignPatterns.Abstractions.Adapter;
 using MCB.Core.Infra.CrossCutting.DesignPatterns.Abstractions.Notifications;
 using MCB.Core.Infra.CrossCutting.DesignPatterns.Abstractions.Notifications.Models;
 using MCB.Core.Infra.CrossCutting.DesignPatterns.Abstractions.Notifications.Models.Enums;
 using MCB.Core.Infra.CrossCutting.DesignPatterns.DependencyInjection;
-using MCB.Core.Infra.CrossCutting.DesignPatterns.Notifications;
-using MCB.Core.Infra.CrossCutting.DesignPatterns.Notifications.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -46,18 +41,45 @@ public class NotificationPublisherTest
         dependencyInjectionContainer.Build();
 
         var notificationPublisher = dependencyInjectionContainer.Resolve<INotificationPublisher>()!;
+        var notificationSubscriber = dependencyInjectionContainer.Resolve<INotificationSubscriber>()!;
+
         notificationPublisher.Should().NotBeNull();
 
-        var notification = new Notification(
+        var notificationA = new Notification(
             NotificationType.Information,
+            code: Guid.NewGuid().ToString(),
+            description: Guid.NewGuid().ToString()
+        );
+        var notificationB = new Notification(
+            NotificationType.Warning,
+            code: Guid.NewGuid().ToString(),
+            description: Guid.NewGuid().ToString()
+        );
+        var notificationC = new Notification(
+            NotificationType.Error,
             code: Guid.NewGuid().ToString(),
             description: Guid.NewGuid().ToString()
         );
 
         // Act
         await notificationPublisher.PublishNotificationAsync(
-            notification,
+            notificationA,
             cancellationToken: default
         );
+        await notificationPublisher.PublishNotificationAsync(
+            notificationB,
+            cancellationToken: default
+        );
+        await notificationPublisher.PublishNotificationAsync(
+            notificationC,
+            cancellationToken: default
+        );
+
+        // Assert
+        notificationSubscriber.NotificationCollection.Should().HaveCount(3);
+
+        notificationSubscriber.NotificationCollection.First(q => q.NotificationType == NotificationType.Information).Should().Be(notificationA);
+        notificationSubscriber.NotificationCollection.First(q => q.NotificationType == NotificationType.Warning).Should().Be(notificationB);
+        notificationSubscriber.NotificationCollection.First(q => q.NotificationType == NotificationType.Error).Should().Be(notificationC);
     }
 }

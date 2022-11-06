@@ -3,6 +3,7 @@ using MapsterMapper;
 using MCB.Core.Infra.CrossCutting.DependencyInjection.Abstractions.Interfaces;
 using MCB.Core.Infra.CrossCutting.DesignPatterns.Abstractions.Adapter;
 using MCB.Core.Infra.CrossCutting.DesignPatterns.Abstractions.Notifications;
+using MCB.Core.Infra.CrossCutting.DesignPatterns.Abstractions.Notifications.Models;
 using MCB.Core.Infra.CrossCutting.DesignPatterns.DependencyInjection.Models;
 using MCB.Core.Infra.CrossCutting.DesignPatterns.Notifications;
 using MCB.Core.Infra.CrossCutting.DesignPatterns.Notifications.Interfaces;
@@ -44,7 +45,14 @@ public static class Bootstrapper
     }
     private static void ConfigureServicesForNotifications(IDependencyInjectionContainer dependencyInjectionContainer)
     {
-        dependencyInjectionContainer.RegisterScoped<INotificationPublisherInternal, NotificationPublisherInternal>();
+        dependencyInjectionContainer.RegisterScoped<INotificationPublisherInternal>(dependencyInjectionContainer =>
+        {
+            var notificationPublisherInternal = new NotificationPublisherInternal(dependencyInjectionContainer);
+
+            notificationPublisherInternal.Subscribe<INotificationSubscriber, Notification>();
+
+            return notificationPublisherInternal;
+        });
         dependencyInjectionContainer.RegisterScoped<INotificationPublisher, NotificationPublisher>();
         dependencyInjectionContainer.RegisterScoped<INotificationSubscriber, NotificationSubscriber>();
     }
