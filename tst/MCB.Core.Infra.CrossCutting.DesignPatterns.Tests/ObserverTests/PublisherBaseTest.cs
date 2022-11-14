@@ -16,24 +16,29 @@ public class PublisherBaseTest
     {
         // Arrange
         var samplePublisher = new SamplePublisher();
-        samplePublisher.Subscribe<SampleEventSubscriberA, SampleEvent>();
-        samplePublisher.Subscribe<SampleEventSubscriberA, SampleEvent>();
+        samplePublisher.Subscribe(subscriberType: typeof(SampleEventSubscriberA), subjectType: typeof(SampleEvent));
+        samplePublisher.Subscribe<SampleEventSubscriberA>(subjectType: typeof(SampleEvent));
         samplePublisher.Subscribe<SampleEventSubscriberB, SampleEvent>();
 
         var sampleEventGuid = Guid.NewGuid();
         var sampleEvent = new SampleEvent { Id = sampleEventGuid };
+        var sampleEventInheritedGuid = Guid.NewGuid();
+        var sampleEventInherited = new SampleEventInherited { Id = sampleEventInheritedGuid, Timespan = DateTime.UtcNow };
 
         // Act
         await samplePublisher.PublishAsync(sampleEvent, default).ConfigureAwait(false);
+        await samplePublisher.PublishAsync(sampleEventInherited, subjectBaseType: typeof(SampleEvent), default).ConfigureAwait(false);
         await samplePublisher.PublishAsync(new NoSubscriberEvent(), default).ConfigureAwait(false);
         samplePublisher.SubscriptionsDictionary.Add(typeof(NoSubscriberEvent), new List<Type> { typeof(SampleEventSubscriberA) });
 
         // Assert
-        SampleEventSubscriberA.ReceivedSubjects.Should().HaveCount(1);
+        SampleEventSubscriberA.ReceivedSubjects.Should().HaveCount(2);
         SampleEventSubscriberA.ReceivedSubjects[0].Id.Should().Be(sampleEventGuid);
+        SampleEventSubscriberA.ReceivedSubjects[1].Id.Should().Be(sampleEventInheritedGuid);
 
-        SampleEventSubscriberB.ReceivedSubjects.Should().HaveCount(1);
+        SampleEventSubscriberB.ReceivedSubjects.Should().HaveCount(2);
         SampleEventSubscriberB.ReceivedSubjects[0].Id.Should().Be(sampleEventGuid);
+        SampleEventSubscriberB.ReceivedSubjects[1].Id.Should().Be(sampleEventInheritedGuid);
 
         samplePublisher.SubscriptionsDictionary.Count.Should().Be(1);
         samplePublisher.SubscriptionsDictionary[typeof(SampleEvent)].Count.Should().Be(2);
@@ -43,6 +48,11 @@ public class PublisherBaseTest
 public class SampleEvent
 {
     public Guid Id { get; set; }
+}
+public class SampleEventInherited
+    : SampleEvent
+{
+    public DateTime Timespan { get; set; }
 }
 public class NoSubscriberEvent
 {
