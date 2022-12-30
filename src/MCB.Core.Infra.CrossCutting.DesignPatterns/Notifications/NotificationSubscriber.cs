@@ -25,4 +25,9 @@ public class NotificationSubscriber
         _notificationCollection.Enqueue(subject);
         return Task.CompletedTask;
     }
+
+    public void ClearAllNotifications()
+    {
+        _notificationCollection.Clear();
+    }
 }

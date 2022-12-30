@@ -48,17 +48,20 @@ public class NotificationPublisherTest
         var notificationA = new Notification(
             NotificationType.Information,
             code: Guid.NewGuid().ToString(),
-            description: Guid.NewGuid().ToString()
+            description: Guid.NewGuid().ToString(),
+            notificationCollection: Enumerable.Empty<Notification>()
         );
         var notificationB = new Notification(
             NotificationType.Warning,
             code: Guid.NewGuid().ToString(),
-            description: Guid.NewGuid().ToString()
+            description: Guid.NewGuid().ToString(),
+            notificationCollection: Enumerable.Empty<Notification>()
         );
         var notificationC = new Notification(
             NotificationType.Error,
             code: Guid.NewGuid().ToString(),
-            description: Guid.NewGuid().ToString()
+            description: Guid.NewGuid().ToString(),
+            notificationCollection: Enumerable.Empty<Notification>()
         );
 
         // Act
@@ -118,7 +121,12 @@ public class NotificationPublisherTest
         try
         {
             await notificationPublisher.PublishNotificationAsync(
-                new Notification(NotificationType.Information, code: Guid.NewGuid().ToString(), description: Guid.NewGuid().ToString()),
+                new Notification(
+                    NotificationType.Information,
+                    code: Guid.NewGuid().ToString(),
+                    description: Guid.NewGuid().ToString(),
+                    notificationCollection: Enumerable.Empty<Notification>()
+                ),
                 cancellationToken: default
             );
         }

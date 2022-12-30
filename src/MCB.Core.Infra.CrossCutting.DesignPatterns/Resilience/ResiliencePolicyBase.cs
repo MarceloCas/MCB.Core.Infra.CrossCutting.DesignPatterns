@@ -182,7 +182,7 @@ public abstract class ResiliencePolicyBase
         ResetCurrentRetryCount();
         return true;
     }
-    public async Task<(bool success, TOutput? output)> ExecuteAsync<TInput, TOutput>(Func<TInput?, CancellationToken, Task<TOutput?>> handler, TInput? input, CancellationToken cancellationToken)
+    public async Task<(bool Success, TOutput? Output)> ExecuteAsync<TInput, TOutput>(Func<TInput?, CancellationToken, Task<TOutput?>> handler, TInput? input, CancellationToken cancellationToken)
     {
         var policyResult = await _asyncCircuitBreakerPolicy.ExecuteAndCaptureAsync(
             async (context, cancellationToken) =>
@@ -204,10 +204,10 @@ public abstract class ResiliencePolicyBase
         var success = policyResult.Outcome == OutcomeType.Successful;
 
         if (!success)
-            return (success: false, output: default);
+            return (Success: false, Output: default);
 
         ResetCurrentRetryCount();
 
-        return (success, output: (TOutput)policyResult.Context[RETRY_POLICY_CONTEXT_OUTPUT_KEY]);
+        return (success, Output: (TOutput)policyResult.Context[RETRY_POLICY_CONTEXT_OUTPUT_KEY]);
     }
 }
