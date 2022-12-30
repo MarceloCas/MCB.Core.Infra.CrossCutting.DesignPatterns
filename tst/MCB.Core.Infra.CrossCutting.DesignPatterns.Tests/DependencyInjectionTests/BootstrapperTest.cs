@@ -3,6 +3,7 @@ using Mapster;
 using MapsterMapper;
 using MCB.Core.Infra.CrossCutting.DependencyInjection;
 using MCB.Core.Infra.CrossCutting.DependencyInjection.Abstractions.Enums;
+using MCB.Core.Infra.CrossCutting.DependencyInjection.Abstractions.Models;
 using MCB.Core.Infra.CrossCutting.DesignPatterns.Abstractions.Adapter;
 using MCB.Core.Infra.CrossCutting.DesignPatterns.DependencyInjection;
 using MCB.Core.Infra.CrossCutting.DesignPatterns.DependencyInjection.Models;
@@ -93,8 +94,8 @@ public class BootstrapperTest
         var mapper = dependencyInjectionContainer.Resolve<IMapper>();
         var adapter = dependencyInjectionContainer.Resolve<IAdapter>();
 
-        mapperRegistration.Should().BeNull();
-        adapterRegistration.Should().BeNull();
+        mapperRegistration.Should().Be(default(Registration));
+        adapterRegistration.Should().Be(default(Registration));
         mapper.Should().BeNull();
         adapter.Should().BeNull();
     }

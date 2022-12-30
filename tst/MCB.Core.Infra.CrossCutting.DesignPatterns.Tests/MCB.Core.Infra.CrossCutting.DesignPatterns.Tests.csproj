@@ -13,7 +13,7 @@
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
 		<PackageReference Include="FluentAssertions" Version="6.8.0" />
-		<PackageReference Include="MCB.Core.Infra.CrossCutting.DependencyInjection" Version="0.8.0-alpha" />
+		<PackageReference Include="MCB.Core.Infra.CrossCutting.DependencyInjection" Version="0.9.0-alpha" />
 		<PackageReference Include="MCB.Core.Infra.CrossCutting.DependencyInjection.Abstractions" Version="0.7.0-alpha" />
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Logging" Version="7.0.0" />
