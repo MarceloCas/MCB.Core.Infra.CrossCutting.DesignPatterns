@@ -5,6 +5,10 @@ using MCB.Core.Infra.CrossCutting.DesignPatterns.Abstractions.Adapter;
 using MCB.Core.Infra.CrossCutting.DesignPatterns.Abstractions.Notifications;
 using MCB.Core.Infra.CrossCutting.DesignPatterns.Abstractions.Notifications.Models;
 using MCB.Core.Infra.CrossCutting.DesignPatterns.DependencyInjection.Models;
+using MCB.Core.Infra.CrossCutting.DesignPatterns.ExecutionInfo.Specifications;
+using MCB.Core.Infra.CrossCutting.DesignPatterns.ExecutionInfo.Specifications.Interfaces;
+using MCB.Core.Infra.CrossCutting.DesignPatterns.ExecutionInfo.Validators;
+using MCB.Core.Infra.CrossCutting.DesignPatterns.ExecutionInfo.Validators.Interfaces;
 using MCB.Core.Infra.CrossCutting.DesignPatterns.Notifications;
 using MCB.Core.Infra.CrossCutting.DesignPatterns.Notifications.Interfaces;
 
@@ -18,6 +22,9 @@ public static class Bootstrapper
         Action<AdapterConfig> adapterConfigurationAction
     )
     {
+        dependencyInjectionContainer.RegisterSingleton<IExecutionInfoSpecifications, ExecutionInfoSpecifications>();
+        dependencyInjectionContainer.RegisterSingleton<IExecutionUserValidator, ExecutionUserValidator>();
+
         ConfigureServicesForAdapterPattern(dependencyInjectionContainer, adapterConfigurationAction);
         ConfigureServicesForNotifications(dependencyInjectionContainer);
     }
